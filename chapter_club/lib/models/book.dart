@@ -50,4 +50,12 @@ class Book {
       note: note ?? this.note,
     );
   }
+
+  int get count => readers.length;
+  int get free => copies - count;
+  bool get isFull => free <= 0;
+  bool get isPast => meetingDate.isBefore(DateTime.now());
+  bool contains(String name) => readers.contains(name);
+
+  ({int taken, int free}) get places => (taken: count, free: free);
 }
