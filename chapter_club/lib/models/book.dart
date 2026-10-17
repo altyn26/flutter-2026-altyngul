@@ -7,23 +7,25 @@ class Book {
     required this.genre,
     required this.meetingDate,
     required this.copies,
-    required this.readers,
+    required List<String> readers,
     required this.isOnline,
     required this.place,
     this.note,
     this.favourite = false,
-  });
+  }) : _readers = readers;
 
   final String id;
   final String title;
   final Genre genre;
   final DateTime meetingDate;
   final int copies;
-  final List<String> readers;
+  final List<String> _readers;
   final bool isOnline;
   final String place;
   final String? note;
   final bool favourite;
+
+  List<String> get readers => List.unmodifiable(_readers);
 
   Book copyWith({
     String? title,
