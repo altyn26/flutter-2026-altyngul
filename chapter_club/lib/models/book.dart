@@ -60,4 +60,16 @@ class Book {
   bool contains(String name) => readers.contains(name);
 
   ({int taken, int free}) get places => (taken: count, free: free);
+
+  Book.empty()
+    : id = '',
+      title = '',
+      genre = Genre.fantasy,
+      meetingDate = DateTime.now().add(const Duration(days: 1)),
+      copies = 1,
+      _readers = const [],
+      isOnline = false,
+      place = '',
+      note = null,
+      favourite = false;
 }
