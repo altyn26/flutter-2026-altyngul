@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chapter_club/data/seed_books.dart';
-import 'package:chapter_club/widgets/book_card.dart';
+import 'package:chapter_club/screens/book_list_tab.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,13 +17,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: Scaffold(
-        body: SafeArea(
-          child: ListView(
-            children: [
-              for (final book in seedBooks())
-                BookCard(book: book, onTap: () {}, onFavourite: () {}),
-            ],
-          ),
+        appBar: AppBar(title: const Text('Chapter Club')),
+        body: BookListTab(
+          books: seedBooks(),
+          onToggleFavourite: (_) {},
+          onOpen: (_) {},
         ),
       ),
     );
