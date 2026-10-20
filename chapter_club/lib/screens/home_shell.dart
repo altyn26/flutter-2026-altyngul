@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:chapter_club/data/seed_books.dart';
 import 'package:chapter_club/models/book.dart';
 import 'package:chapter_club/models/profile.dart';
+import 'package:chapter_club/route_args.dart';
+import 'package:chapter_club/routes.dart';
 import 'package:chapter_club/screens/book_list_tab.dart';
 
 class HomeShell extends StatefulWidget {
@@ -30,6 +32,35 @@ class _HomeShellState extends State<HomeShell> {
           b.id == book.id ? b.copyWith(favourite: !b.favourite) : b,
       ];
     });
+  }
+
+  void _replaceBook(Book updated) {
+    setState(() {
+      _books = [for (final b in _books) b.id == updated.id ? updated : b];
+    });
+  }
+
+  void _deleteBook(Book book) {
+    setState(() {
+      _books = [
+        for (final b in _books)
+          if (b.id != book.id) b,
+      ];
+    });
+  }
+
+  void _openDetail(Book book) {
+    Navigator.pushNamed(
+      context,
+      Routes.detail,
+      arguments: DetailArgs(
+        book: book,
+        profileName: _profile.name,
+        onChanged: _replaceBook,
+        onDelete: _deleteBook,
+        onOpenProfile: () => _selectTab(2),
+      ),
+    );
   }
 
   void _selectTab(int index) {
@@ -83,7 +114,7 @@ class _HomeShellState extends State<HomeShell> {
       BookListTab(
         books: _books,
         onToggleFavourite: _toggleFavourite,
-        onOpen: (book) {},
+        onOpen: _openDetail,
       ),
       const Center(child: Text('Favourites')),
       Center(child: Text('Profile: ${_profile.name}')),

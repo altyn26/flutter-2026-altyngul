@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chapter_club/screens/home_shell.dart';
+import 'package:chapter_club/routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +34,12 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       themeMode: _themeMode,
-      home: HomeShell(themeMode: _themeMode, onThemeModeChanged: _setThemeMode),
+      routes: {
+        Routes.home: (context) =>
+            HomeShell(themeMode: _themeMode, onThemeModeChanged: _setThemeMode),
+      },
+      onGenerateRoute: onGenerateRoute,
+      onUnknownRoute: onUnknownRoute,
     );
   }
 }
