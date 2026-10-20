@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:chapter_club/screens/home_shell.dart';
 import 'package:chapter_club/routes.dart';
+import 'package:chapter_club/screens/home_shell.dart';
+import 'package:chapter_club/theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,15 +25,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chapter Club',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.dark,
-        ),
-      ),
+      theme: buildLightTheme(),
+      darkTheme: buildDarkTheme(),
       themeMode: _themeMode,
       routes: {
         Routes.home: (context) =>

@@ -5,6 +5,8 @@ import 'package:chapter_club/models/profile.dart';
 import 'package:chapter_club/route_args.dart';
 import 'package:chapter_club/routes.dart';
 import 'package:chapter_club/screens/book_list_tab.dart';
+import 'package:chapter_club/screens/favourites_tab.dart';
+import 'package:chapter_club/screens/profile_tab.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({
@@ -47,6 +49,10 @@ class _HomeShellState extends State<HomeShell> {
           if (b.id != book.id) b,
       ];
     });
+  }
+
+  void _updateProfile(Profile profile) {
+    setState(() => _profile = profile);
   }
 
   void _openDetail(Book book) {
@@ -126,8 +132,18 @@ class _HomeShellState extends State<HomeShell> {
         onToggleFavourite: _toggleFavourite,
         onOpen: _openDetail,
       ),
-      const Center(child: Text('Favourites')),
-      Center(child: Text('Profile: ${_profile.name}')),
+      FavouritesTab(
+        books: _books,
+        onToggleFavourite: _toggleFavourite,
+        onOpen: _openDetail,
+      ),
+      ProfileTab(
+        profile: _profile,
+        books: _books,
+        themeMode: widget.themeMode,
+        onProfileChanged: _updateProfile,
+        onThemeModeChanged: widget.onThemeModeChanged,
+      ),
     ];
 
     return Scaffold(

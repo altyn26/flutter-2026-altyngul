@@ -6,6 +6,7 @@ import 'package:chapter_club/models/book.dart';
 import 'package:chapter_club/models/countdown.dart';
 import 'package:chapter_club/route_args.dart';
 import 'package:chapter_club/utils/format.dart';
+import 'package:chapter_club/widgets/empty_state.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({super.key, required this.args});
@@ -214,7 +215,10 @@ class _DetailScreenState extends State<DetailScreen> {
                     ],
                   ),
                   _book.readers.isEmpty
-                      ? const Center(child: Text('Nobody has borrowed it yet'))
+                      ? const EmptyState(
+                          icon: Icons.person_off,
+                          message: 'Nobody has borrowed it yet',
+                        )
                       : ListView(
                           children: [
                             for (final reader in _book.readers)

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:chapter_club/models/book.dart';
 import 'package:chapter_club/models/genre.dart';
 import 'package:chapter_club/widgets/book_card.dart';
+import 'package:chapter_club/widgets/empty_state.dart';
 
 class BookListTab extends StatefulWidget {
   const BookListTab({
@@ -31,6 +32,15 @@ class _BookListTabState extends State<BookListTab> {
     super.dispose();
   }
 
+  void _resetFilters() {
+    _searchController.clear();
+    setState(() {
+      _query = '';
+      _genre = null;
+      _showPast = false;
+    });
+  }
+
   List<Book> get _visible {
     final result = widget.books.where((book) {
       final matchesQuery = book.title.toLowerCase().contains(
@@ -47,12 +57,21 @@ class _BookListTabState extends State<BookListTab> {
       }
       return a.meetingDate.compareTo(b.meetingDate);
     });
+
     return result;
   }
 
   @override
   Widget build(BuildContext context) {
     final books = _visible;
+
+    Widget cardFor(Book book) {
+      return BookCard(
+        book: book,
+        onTap: () => widget.onOpen(book),
+        onFavourite: () => widget.onToggleFavourite(book),
+      );
+    }
 
     return Column(
       children: [
@@ -105,18 +124,33 @@ class _BookListTabState extends State<BookListTab> {
           ),
         ),
         Expanded(
-          child: ListView.separated(
-            itemCount: books.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 4),
-            itemBuilder: (context, index) {
-              final book = books[index];
-              return BookCard(
-                book: book,
-                onTap: () => widget.onOpen(book),
-                onFavourite: () => widget.onToggleFavourite(book),
-              );
-            },
-          ),
+          child: books.isEmpty
+              ? EmptyState(
+                  icon: Icons.search_off,
+                  message: 'No books match your search',
+                  actionLabel: 'Reset filters',
+                  onAction: _resetFilters,
+                )
+              : LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth >= 600) {
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 360,
+                              mainAxisExtent: 130,
+                            ),
+                        itemCount: books.length,
+                        itemBuilder: (context, index) => cardFor(books[index]),
+                      );
+                    }
+                    return ListView.separated(
+                      itemCount: books.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 4),
+                      itemBuilder: (context, index) => cardFor(books[index]),
+                    );
+                  },
+                ),
         ),
       ],
     );
