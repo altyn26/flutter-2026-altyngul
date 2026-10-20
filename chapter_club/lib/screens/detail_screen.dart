@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chapter_club/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:chapter_club/models/book.dart';
 import 'package:chapter_club/models/countdown.dart';
@@ -95,6 +96,17 @@ class _DetailScreenState extends State<DetailScreen> {
     widget.args.onChanged(updated);
   }
 
+  Future<void> _edit() async {
+    final updated = await Navigator.pushNamed<Book>(
+      context,
+      Routes.form,
+      arguments: FormArgs(book: _book),
+    );
+    if (updated == null || !mounted) return;
+    setState(() => _book = updated);
+    widget.args.onChanged(updated);
+  }
+
   Future<void> _confirmDelete() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -138,8 +150,8 @@ class _DetailScreenState extends State<DetailScreen> {
           actions: [
             PopupMenuButton<String>(
               onSelected: (value) {
+                if (value == 'edit') _edit();
                 if (value == 'delete') _confirmDelete();
-                // TODO: 'edit' will open the form later
               },
               itemBuilder: (context) => const [
                 PopupMenuItem(value: 'edit', child: Text('Edit')),
