@@ -70,8 +70,8 @@ List<Book> seedBooks() {
       title: 'Munder on the Orient Express',
       genre: Genre.detective,
       meetingDate: now.add(const Duration(days: 9)),
-      copies: 8,
-      readers: ['Alan', 'Tanya'],
+      copies: 4,
+      readers: ['Alan', 'Tanya', 'Nurgul'],
       isOnline: false,
       place: 'Library, room 207',
       note: 'Come with your own suspects.',
@@ -110,7 +110,7 @@ List<Book> seedBooks() {
       copies: 5,
       readers: [],
       isOnline: false,
-      place: 'university library',
+      place: 'University library',
       note: 'Be the first to join.',
     ),
     Book(
@@ -152,7 +152,7 @@ List<Book> seedBooks() {
       copies: 5,
       readers: ['Dias', 'Albina'],
       isOnline: false,
-      place: 'coffee shop',
+      place: 'Coffee shop',
       note: 'A wife disappears,and secrets emerge.',
     ),
   ];
