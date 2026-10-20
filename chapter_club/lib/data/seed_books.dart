@@ -67,7 +67,7 @@ List<Book> seedBooks() {
     //almost full: 1 copy left
     Book(
       id: '6',
-      title: 'Munder on the Orient Express',
+      title: 'Murder on the Orient Express',
       genre: Genre.detective,
       meetingDate: now.add(const Duration(days: 9)),
       copies: 4,
@@ -133,7 +133,7 @@ List<Book> seedBooks() {
     ),
     Book(
       id: '11',
-      title: 'Harry Potter and the Philosohhers Stone',
+      title: 'Harry Potter and the Sorcerer Stone',
       genre: Genre.fantasy,
       meetingDate: now.add(const Duration(days: 20)),
       copies: 9,
