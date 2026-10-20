@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:chapter_club/data/seed_books.dart';
-import 'package:chapter_club/screens/book_list_tab.dart';
+import 'package:chapter_club/screens/home_shell.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void _setThemeMode(ThemeMode mode) {
+    setState(() => _themeMode = mode);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +26,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Chapter Club')),
-        body: BookListTab(
-          books: seedBooks(),
-          onToggleFavourite: (_) {},
-          onOpen: (_) {},
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
         ),
       ),
+      themeMode: _themeMode,
+      home: HomeShell(themeMode: _themeMode, onThemeModeChanged: _setThemeMode),
     );
   }
 }
