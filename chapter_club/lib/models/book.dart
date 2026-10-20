@@ -1,4 +1,5 @@
 import 'genre.dart';
+import 'countdown.dart';
 
 class Book {
   const Book({
@@ -60,6 +61,18 @@ class Book {
   bool contains(String name) => readers.contains(name);
 
   ({int taken, int free}) get places => (taken: count, free: free);
+
+  Countdown get countdown {
+    final now = DateTime.now();
+    final end = meetingDate.add(const Duration(hours: 2));
+    if (now.isBefore(meetingDate)) {
+      return Upcoming(meetingDate.difference(now));
+    }
+    if (now.isBefore(end)) {
+      return Started(now.difference(meetingDate));
+    }
+    return const Ended();
+  }
 
   Book.empty()
     : id = '',

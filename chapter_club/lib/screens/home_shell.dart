@@ -63,6 +63,16 @@ class _HomeShellState extends State<HomeShell> {
     );
   }
 
+  Future<void> _addBook() async {
+    final book = await Navigator.pushNamed<Book>(
+      context,
+      Routes.form,
+      arguments: const FormArgs(),
+    );
+    if (book == null || !mounted) return;
+    setState(() => _books = [..._books, book]);
+  }
+
   void _selectTab(int index) {
     setState(() => _tab = index);
   }
@@ -147,6 +157,12 @@ class _HomeShellState extends State<HomeShell> {
         ),
       ),
       body: tabs[_tab],
+      floatingActionButton: _tab == 0
+          ? FloatingActionButton(
+              onPressed: _addBook,
+              child: const Icon(Icons.add),
+            )
+          : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _tab,
         onDestinationSelected: _selectTab,

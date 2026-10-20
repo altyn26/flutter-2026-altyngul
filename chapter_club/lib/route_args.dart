@@ -16,3 +16,9 @@ class DetailArgs {
   final void Function(Book book) onDelete;
   final VoidCallback onOpenProfile;
 }
+
+class FormArgs {
+  const FormArgs({this.book});
+
+  final Book? book;
+}
