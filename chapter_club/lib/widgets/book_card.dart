@@ -69,7 +69,11 @@ class BookCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(formatDate(book.meetingDate)),
-                    Text(book.place),
+                    Text(
+                      book.place,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
               ),

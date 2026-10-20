@@ -138,7 +138,7 @@ class _BookListTabState extends State<BookListTab> {
                         gridDelegate:
                             const SliverGridDelegateWithMaxCrossAxisExtent(
                               maxCrossAxisExtent: 360,
-                              mainAxisExtent: 130,
+                              mainAxisExtent: 140,
                             ),
                         itemCount: books.length,
                         itemBuilder: (context, index) => cardFor(books[index]),
