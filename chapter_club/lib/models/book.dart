@@ -1,3 +1,8 @@
+// ignore_for_file: prefer_initializing_formals
+// The list is private so that it cannot be changed from outside (R1), and
+// named parameters cannot start with an underscore, so an initializer list
+// is the only way to fill it.
+
 import 'genre.dart';
 import 'countdown.dart';
 
