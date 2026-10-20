@@ -7,7 +7,7 @@ List<Book> seedBooks() {
     //title of exactly 60 characters
     Book(
       id: '1',
-      title: 'The Unbelieably Long Story of the Librarian Who Never Slept',
+      title: 'The Unbelievably Long Story of the Librarian Who Never Slept',
       genre: Genre.fantasy,
       meetingDate: now.add(const Duration(days: 5)),
       copies: 8,
