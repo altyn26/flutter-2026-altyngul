@@ -3,7 +3,6 @@ import 'package:chapter_club/data/seed_books.dart';
 import 'package:chapter_club/widgets/book_card.dart';
 
 void main() {
-  print(seedBooks().first.title.length);
   runApp(const MyApp());
 }
 
