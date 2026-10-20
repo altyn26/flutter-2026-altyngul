@@ -1,14 +1,19 @@
-# chapter_club
+# Chapter Club
 
-A reading club app: a list of books with a meeting date, a genre and a limit of copies. You can borrow and return a book, add, edit and delete books, search and filter the list, and mark favourites. All data lives in memory (no network, no storage).
+A reading club app: a list of books with a meeting date, a genre and a limit of
+copies. You can borrow and return a book, add, edit and delete books, search and
+filter the list, and mark favourites. All data lives in memory (no network, no
+storage).
 
-# screenshots
+## Screenshots
+
 | Phone, light | Phone, dark | Tablet, grid |
 | --- | --- | --- |
 | ![Phone, light](screenshots/phone_light.png) | ![Phone, dark](screenshots/phone_dark.png) | ![Tablet, grid](screenshots/tablet_grid.png) |
 
-# decisions
-he list of books and the profile live in the State of `HomeShell`,because three
+## Decisions
+
+The list of books and the profile live in the State of `HomeShell`, because three
 tabs and the pushed screens all need the same data, so the tabs receive it as
 constructor parameters and send changes up through callbacks. The detail screen
 receives the book and callbacks through its route arguments because it can change
@@ -23,4 +28,3 @@ changed in place: every change builds a new list with `copyWith`, and `Book` hid
 its readers behind an unmodifiable getter. With the tools of week 9 I would move
 the data out of the shell state into a separate store, so that the screens do not
 depend on `HomeShell` and the callbacks disappear.
-
