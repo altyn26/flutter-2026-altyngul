@@ -1,0 +1,85 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+import 'api_exception.dart';
+
+class ApiClient {
+  ApiClient(this._client, {this.host = 'jsonplaceholder.typicode.com'});
+
+  final http.Client _client;
+  final String host;
+
+  static const _timeout = Duration(seconds: 10);
+
+  /// Headers live in one place.
+  Map<String, String> get headers => const {'Accept': 'application/json'};
+
+  /// Addresses are always built with Uri.https, never by concatenation.
+  Uri uri(String path, [Map<String, String>? query]) =>
+      Uri.https(host, path, query);
+
+  Future<http.Response> get(Uri url) =>
+      _run(() => _client.get(url, headers: headers));
+
+  Future<http.Response> post(Uri url, {required String body}) => _run(
+    () => _client.post(
+      url,
+      headers: {...headers, 'Content-Type': 'application/json'},
+      body: body,
+    ),
+  );
+
+  /// Public entry to the private decoder.
+  dynamic decode(http.Response r) => _decode(r);
+
+  Future<http.Response> _run(Future<http.Response> Function() call) async {
+    final r = await _send(call);
+    _check(r); // status first, body later — every time
+    return r;
+  }
+
+  Future<http.Response> _send(Future<http.Response> Function() call) async {
+    try {
+      final r = await call().timeout(_timeout);
+      if (kDebugMode) {
+        log(
+          '${r.request?.method} ${r.request?.url.path} → ${r.statusCode}',
+          name: 'api',
+        );
+      }
+      return r;
+    } on SocketException {
+      throw const NoConnectionException();
+    } on TimeoutException {
+      throw const NoConnectionException();
+    } on http.ClientException {
+      throw const NoConnectionException();
+    }
+  }
+
+  void _check(http.Response r) {
+    switch (r.statusCode) {
+      case 401:
+        throw const UnauthorizedException();
+      case 404:
+        throw const NotFoundException();
+      case >= 500:
+        throw ServerException(r.statusCode);
+      case >= 400:
+        throw BadResponseException('HTTP ${r.statusCode}');
+    }
+  }
+
+  dynamic _decode(http.Response r) {
+    try {
+      return jsonDecode(r.body);
+    } on FormatException catch (e) {
+      throw BadResponseException('${r.request?.url.path}: $e');
+    }
+  }
+}
