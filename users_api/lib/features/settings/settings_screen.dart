@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../auth/auth_model.dart';
 import '../users/users_model.dart';
 import 'settings_model.dart';
 
@@ -40,6 +41,14 @@ class SettingsScreen extends StatelessWidget {
               ],
               onChanged: settings.setCity,
             ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Sign out'),
+            onTap: () async {
+              await context.read<AuthModel>().logout();
+              if (context.mounted) Navigator.of(context).pop();
+            },
           ),
         ],
       ),

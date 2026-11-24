@@ -1,11 +1,29 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import '../../core/storage/secure_store.dart';
 import 'user.dart';
 
 class UserDetailScreen extends StatelessWidget {
   const UserDetailScreen({super.key, required this.user});
 
   final User user;
+
+  Future<void> _copyToken(BuildContext context) async {
+    final token = await const SecureStore().readToken();
+    if (!context.mounted) return;
+    if (token == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('No token saved')));
+      return;
+    }
+    await Clipboard.setData(ClipboardData(text: token));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Token copied (debug only)')));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +64,15 @@ class UserDetailScreen extends StatelessWidget {
             title: Text(user.company.name),
             subtitle: Text(user.company.catchPhrase),
           ),
+          if (kDebugMode) ...[
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.key),
+              title: const Text('Copy token to clipboard'),
+              subtitle: const Text('Debug builds only'),
+              onTap: () => _copyToken(context),
+            ),
+          ],
         ],
       ),
     );

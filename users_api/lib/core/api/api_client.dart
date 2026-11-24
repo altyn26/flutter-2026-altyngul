@@ -6,30 +6,42 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../storage/secure_store.dart';
 import 'api_exception.dart';
 
 class ApiClient {
-  ApiClient(this._client, {this.host = 'jsonplaceholder.typicode.com'});
+  ApiClient(
+    this._client,
+    this._store, {
+    this.host = 'jsonplaceholder.typicode.com',
+  });
 
   final http.Client _client;
+  final SecureStore _store;
   final String host;
 
   static const _timeout = Duration(seconds: 10);
 
-  /// Headers live in one place.
-  Map<String, String> get headers => const {'Accept': 'application/json'};
+  /// Headers live in one place. The token is added here and nowhere else.
+  Future<Map<String, String>> _headers() async {
+    final token = await _store.readToken();
+    return {
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
 
   /// Addresses are always built with Uri.https, never by concatenation.
   Uri uri(String path, [Map<String, String>? query]) =>
       Uri.https(host, path, query);
 
   Future<http.Response> get(Uri url) =>
-      _run(() => _client.get(url, headers: headers));
+      _run(() async => _client.get(url, headers: await _headers()));
 
   Future<http.Response> post(Uri url, {required String body}) => _run(
-    () => _client.post(
+    () async => _client.post(
       url,
-      headers: {...headers, 'Content-Type': 'application/json'},
+      headers: {...await _headers(), 'Content-Type': 'application/json'},
       body: body,
     ),
   );

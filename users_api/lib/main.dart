@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/api/api_client.dart';
+import 'core/storage/secure_store.dart';
+import 'features/auth/auth_model.dart';
+import 'features/auth/login_screen.dart';
 import 'features/settings/settings_model.dart';
 import 'features/users/user_repository.dart';
 import 'features/users/users_model.dart';
@@ -17,18 +20,23 @@ Future<void> main() async {
   final prefs = SharedPreferencesAsync();
   final dark = await prefs.getBool('darkMode') ?? false; // 2. диск
   final city = await prefs.getString('cityFilter');
+  const store = SecureStore();
+  final token = await store.readToken();
 
   runApp(
     // 3. только теперь первый кадр
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthModel(store, token)),
         ChangeNotifierProvider(
           create: (_) => SettingsModel(prefs, dark: dark, city: city),
         ),
         ChangeNotifierProvider(
           // composition root: the only place that says http.Client()
           create: (_) {
-            final model = UsersModel(UserRepository(ApiClient(http.Client())));
+            final model = UsersModel(
+              UserRepository(ApiClient(http.Client(), store)),
+            );
             unawaited(model.load());
             return model;
           },
@@ -58,7 +66,9 @@ class App extends StatelessWidget {
       scrollBehavior: const MaterialScrollBehavior().copyWith(
         dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
       ),
-      home: const UsersScreen(),
+      home: context.watch<AuthModel>().signedIn
+          ? const UsersScreen()
+          : const LoginScreen(),
     );
   }
 }
