@@ -53,3 +53,30 @@
 ## grep "package:http"
 - api_client.dart, user_repository.dart — the network layer
 - main.dart — the composition root: the only place that creates http.Client() (as the brief requires); no screen or model imports http
+
+
+## Caret and pubspec.lock
+- pubspec.yaml says http: ^1.6.0; pub resolved it to exactly 1.6.0 (see pubspec.lock).
+- ^1.6.0 accepts >=1.6.0 <2.0.0: 1.6.1, 1.7.0, 1.9.9 would all be fine.
+- It refuses 1.5.x and older (below the minimum I tested against) and 2.0.0+ (a new major version may break the API).
+- pubspec.lock is committed for an app so that every machine and every CI build gets exactly the same versions as mine; libraries do not commit it because their users resolve their own versions.
+
+- Experiment: I changed http: ^1.6.0 to http: 1.6.0 (no caret) and ran flutter pub get and flutter pub outdated. Nothing changed in the table, because 1.6.0 is already the latest http. The difference would appear when 1.6.1 is released: ^1.6.0 would accept it, but the pinned 1.6.0 would block it. I restored the caret.
+
+## pub outdated
+- cupertino_icons is locked at 1.0.9, and 2.0.0 is available (Resolvable and Latest columns). I did not upgrade it because my constraint ^1.0.8 does not allow a new major version, and a major version can have breaking changes. Upgrading would mean editing pubspec.yaml by hand (or running flutter pub upgrade --major-versions) and checking the changelog first. The app barely uses it, so there is no reason to risk it now.
+- Other packages in the list (meta, hooks, objective_c, ...) are transitive: I did not choose them, and they can be upgraded safely with flutter pub upgrade, because their constraints already allow it.
+
+## Package verdicts
+1. shared_preferences 2.5.6: verified publisher flutter.dev (Flutter Favorite),released 49 days ago, all six platforms (Android, iOS, Linux, macOS, web, Windows), 160 pub points, BSD-3-Clause, depends only on Flutter and its own per-platform implementation packages.
+
+2. flutter_secure_storage 11.2.0: verified publisher steenbakker.dev, released 2 months ago, all six platforms (Android, iOS, macOS, Windows, Linux, web), 160 pub points, BSD-3-Clause, depends only on Flutter, meta and its own per-platform implementation packages.
+
+3. path_provider 2.1.6: verified publisher flutter.dev, released 5 months ago, five platforms (Android, iOS, Linux, macOS, Windows; no web), 160 pub points, BSD-3-Clause, depends only on Flutter and its own per-platform implementation packages.
+
+4. image_picker 1.2.4: verified publisher flutter.dev, released 49 days ago, all six platforms (Android, iOS, Linux, macOS, web, Windows; camera on desktop needs a custom delegate), 160 pub points, Apache-2.0 and BSD-3-Clause, depends on Flutter and its own per-platform implementation packages. README notes that photos taken with the camera are saved only in a temporary cache, so I 
+must copy them to a permanent location myself.
+
+5. permission_handler 13.0.2: verified publisher baseflow.com (a third-party company, not flutter.dev), released 2 months ago, four platforms (Android, iOS, web, Windows; no Linux/macOS), 160 pub points, MIT, depends on Flutter, meta and its own per-platform implementation packages. README warns that on iOS a missing Info.plist entry kills the app as soon as the permission is checked, and that on Android status never returns permanentlyDenied, only request() does.
+
+6. url_launcher 6.3.3: verified publisher flutter.dev, released 52 days ago, all six platforms (Android, iOS, Linux, macOS, web, Windows), 160 pub points, BSD-3-Clause, depends on Flutter and its own per-platform implementation packages. README says canLaunchUrl can return false even when launchUrl would work, so I call launchUrl directly and check the returned bool.
