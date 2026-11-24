@@ -80,3 +80,14 @@ must copy them to a permanent location myself.
 5. permission_handler 13.0.2: verified publisher baseflow.com (a third-party company, not flutter.dev), released 2 months ago, four platforms (Android, iOS, web, Windows; no Linux/macOS), 160 pub points, MIT, depends on Flutter, meta and its own per-platform implementation packages. README warns that on iOS a missing Info.plist entry kills the app as soon as the permission is checked, and that on Android status never returns permanentlyDenied, only request() does.
 
 6. url_launcher 6.3.3: verified publisher flutter.dev, released 52 days ago, all six platforms (Android, iOS, Linux, macOS, web, Windows), 160 pub points, BSD-3-Clause, depends on Flutter and its own per-platform implementation packages. README says canLaunchUrl can return false even when launchUrl would work, so I call launchUrl directly and check the returned bool.
+
+
+## Level 2: why read settings in main()
+- I read darkMode and cityFilter in main() before runApp, so the first frame already has the right theme.
+- Experiment: I moved the read into the SettingsModel constructor with a default of false. The app showed one light frame and then switched to dark. That flash is the reason the read happens before runApp. I restored the original order.
+
+## Where the token lives
+- prefs.setString('token', ...) would store it in a plain, unencrypted file inside the app's data folder (an XML file on Android, a plist on iOS). Anyone with a backup, a rooted/jailbroken phone or a debug cable can read it. flutter_secure_storage uses the Keychain (iOS) and encrypted storage with a key in the Android Keystore, so the file alone is useless.
+- Surprise 1 (iOS): Keychain items can survive deleting the app, so after a reinstall the old token may still be there.
+- Surprise 2 (Android): Android auto backup can restore the encrypted data onto a device without the key, which throws "Failed to unwrap key"; the fix is android:allowBackup="false".
+- Verified in DevTools → Network: the users request carries "Authorization: Bearer tok_...", and it disappears after Sign out.
