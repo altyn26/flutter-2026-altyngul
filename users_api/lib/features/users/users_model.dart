@@ -27,6 +27,10 @@ class UsersModel extends ChangeNotifier {
     }
   }
 
+  List<User> visible(String? city) => city == null
+      ? items
+      : items.where((u) => u.address.city == city).toList();
+
   /// Used by the "New user" form (Level 5). Throws ApiException.
   Future<User> add(User draft) async {
     final created = await _repo.create(draft);

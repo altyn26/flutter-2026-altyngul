@@ -1,3 +1,6 @@
+import '../settings/settings_model.dart';
+import '../settings/settings_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,22 +16,33 @@ class UsersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final m = context.watch<UsersModel>();
+    final city = context.watch<SettingsModel>().city;
     return Scaffold(
-      appBar: AppBar(title: const Text('Users')),
+      appBar: AppBar(
+        title: const Text('Users'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(
           context,
         ).push(MaterialPageRoute<void>(builder: (_) => const NewUserScreen())),
         child: const Icon(Icons.person_add),
       ),
-      body: _body(m),
+      body: _body(m, city),
     );
   }
 
-  Widget _body(UsersModel m) {
+  Widget _body(UsersModel m, String? city) {
     if (m.loading && m.items.isEmpty) return const LoadingView();
     return switch (m.error) {
-      null => UserList(m.items),
+      null => UserList(m.visible(city)),
       NoConnectionException() => Offline(onRetry: m.load),
       NotFoundException() || UnauthorizedException() => const AccessError(),
       ServerException(:final status) => ServerError(status, onRetry: m.load),
