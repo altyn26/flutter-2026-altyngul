@@ -12,6 +12,7 @@ import 'features/auth/auth_model.dart';
 import 'features/auth/login_screen.dart';
 import 'features/settings/settings_model.dart';
 import 'features/users/user_repository.dart';
+import 'features/users/users_cache.dart';
 import 'features/users/users_model.dart';
 import 'features/users/users_screen.dart';
 
@@ -35,7 +36,7 @@ Future<void> main() async {
           // composition root: the only place that says http.Client()
           create: (_) {
             final model = UsersModel(
-              UserRepository(ApiClient(http.Client(), store)),
+              UserRepository(ApiClient(http.Client(), store), UsersCache()),
             );
             unawaited(model.load());
             return model;

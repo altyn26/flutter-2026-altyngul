@@ -91,3 +91,9 @@ must copy them to a permanent location myself.
 - Surprise 1 (iOS): Keychain items can survive deleting the app, so after a reinstall the old token may still be there.
 - Surprise 2 (Android): Android auto backup can restore the encrypted data onto a device without the key, which throws "Failed to unwrap key"; the fix is android:allowBackup="false".
 - Verified in DevTools → Network: the users request carries "Authorization: Bearer tok_...", and it disappears after Sign out.
+
+## Level 4: Documents vs Temporary
+- The cache file lives in getApplicationDocumentsDirectory(), because Documents is meant to keep data until the user deletes the app; Temporary may be cleared by the OS at any time.
+- Offline logic: on NoConnectionException the repository returns the saved list with fromCache = true; if there is no saved file it rethrows, so the user sees the honest Offline screen and not an empty list.
+- Verified on the Android emulator: loaded the list online, turned on airplane mode, killed the app, reopened it: the ten users appear immediately with the "Saved data · no connection" banner. Retry in airplane mode keeps the banner; with the network back, Retry removes it.
+- On the slow emulator the first request hit the 10 s timeout, which is mapped to NoConnectionException and showed the Offline screen, as designed.

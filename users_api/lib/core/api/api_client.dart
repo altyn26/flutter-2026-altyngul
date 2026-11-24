@@ -65,11 +65,14 @@ class ApiClient {
         );
       }
       return r;
-    } on SocketException {
+    } on SocketException catch (e) {
+      debugPrint('api: SocketException $e');
       throw const NoConnectionException();
-    } on TimeoutException {
+    } on TimeoutException catch (e) {
+      debugPrint('api: TimeoutException $e');
       throw const NoConnectionException();
-    } on http.ClientException {
+    } on http.ClientException catch (e) {
+      debugPrint('api: ClientException $e');
       throw const NoConnectionException();
     }
   }

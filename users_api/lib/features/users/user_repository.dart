@@ -5,21 +5,33 @@ import 'package:http/http.dart' as http;
 import '../../core/api/api_client.dart';
 import '../../core/api/api_exception.dart';
 import 'user.dart';
+import 'users_cache.dart';
+
+typedef UsersResult = ({List<User> items, bool fromCache});
 
 class UserRepository {
-  UserRepository(this._api);
+  UserRepository(this._api, this._cache);
 
   final ApiClient _api;
+  final UsersCache _cache;
 
-  Future<List<User>> getAll() async {
-    final http.Response r = await _api.get(_api.uri('/users'));
-    final data = _api.decode(r);
-    return _parse(
-      'users',
-      () => (data as List<dynamic>)
-          .map((e) => User.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  Future<UsersResult> getAll() async {
+    try {
+      final http.Response r = await _api.get(_api.uri('/users'));
+      final data = _api.decode(r);
+      final fresh = _parse(
+        'users',
+        () => (data as List<dynamic>)
+            .map((e) => User.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      );
+      await _cache.save(fresh);
+      return (items: fresh, fromCache: false);
+    } on NoConnectionException {
+      final saved = await _cache.load();
+      if (saved == null) rethrow; // честный экран Offline
+      return (items: saved, fromCache: true);
+    }
   }
 
   Future<User> getById(int id) async {

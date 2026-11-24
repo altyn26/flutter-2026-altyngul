@@ -35,7 +35,18 @@ class UsersScreen extends StatelessWidget {
         ).push(MaterialPageRoute<void>(builder: (_) => const NewUserScreen())),
         child: const Icon(Icons.person_add),
       ),
-      body: _body(m, city),
+      body: Column(
+        children: [
+          if (m.fromCache)
+            MaterialBanner(
+              content: const Text('Saved data · no connection'),
+              actions: [
+                TextButton(onPressed: m.load, child: const Text('Retry')),
+              ],
+            ),
+          Expanded(child: _body(m, city)),
+        ],
+      ),
     );
   }
 

@@ -12,15 +12,19 @@ class UsersModel extends ChangeNotifier {
   List<User> items = const [];
   ApiException? error;
   bool loading = false;
+  bool fromCache = false;
 
   Future<void> load() async {
     loading = true;
     error = null;
     notifyListeners();
     try {
-      items = await _repo.getAll();
+      final result = await _repo.getAll();
+      items = result.items;
+      fromCache = result.fromCache;
     } on ApiException catch (e) {
       error = e;
+      fromCache = false;
     } finally {
       loading = false;
       notifyListeners();
