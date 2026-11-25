@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/auth_model.dart';
+import '../profile/profile_screen.dart';
 import '../users/users_model.dart';
 import 'settings_model.dart';
 
@@ -40,6 +41,13 @@ class SettingsScreen extends StatelessWidget {
                   DropdownMenuItem<String?>(value: c, child: Text(c)),
               ],
               onChanged: settings.setCity,
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Profile'),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const ProfileScreen()),
             ),
           ),
           ListTile(

@@ -97,3 +97,9 @@ must copy them to a permanent location myself.
 - Offline logic: on NoConnectionException the repository returns the saved list with fromCache = true; if there is no saved file it rethrows, so the user sees the honest Offline screen and not an empty list.
 - Verified on the Android emulator: loaded the list online, turned on airplane mode, killed the app, reopened it: the ten users appear immediately with the "Saved data · no connection" banner. Retry in airplane mode keeps the banner; with the network back, Retry removes it.
 - On the slow emulator the first request hit the 10 s timeout, which is mapped to NoConnectionException and showed the Offline screen, as designed.
+
+## Level 5: permissions
+- Android (emulator, API 35): the system dialog appeared <N> time(s); after that request() returned permanentlyDenied immediately and my own dialog "Camera access is turned off" with "Open settings" appeared. "Open settings" opens the app's permission page; after allowing the camera there, Take photo opens the camera.
+- iOS (not tested, no Mac): the system dialog appears only once. After one "Don't Allow" permission_handler reports permanentlyDenied and the only way back is openAppSettings(). The fourth Photos state is called limited (the user shared only selected photos).
+- launchUrl(Uri.parse('kbtu.edu.kz')) without a scheme returned false and nothing opened; with https:// the browser opens. I check the bool and show "No app can open this".
+- The camera photo is copied to Documents/avatar.jpg because image_picker keeps camera photos only in a temporary cache; the path is stored in shared_preferences, so the photo survives a restart.
