@@ -84,7 +84,6 @@ must copy them to a permanent location myself.
 
 ## Level 2: why read settings in main()
 - I read darkMode and cityFilter in main() before runApp, so the first frame already has the right theme.
-- Experiment: I moved the read into the SettingsModel constructor with a default of false. The app showed one light frame and then switched to dark. That flash is the reason the read happens before runApp. I restored the original order.
 
 ## Where the token lives
 - prefs.setString('token', ...) would store it in a plain, unencrypted file inside the app's data folder (an XML file on Android, a plist on iOS). Anyone with a backup, a rooted/jailbroken phone or a debug cable can read it. flutter_secure_storage uses the Keychain (iOS) and encrypted storage with a key in the Android Keystore, so the file alone is useless.
@@ -99,7 +98,6 @@ must copy them to a permanent location myself.
 - On the slow emulator the first request hit the 10 s timeout, which is mapped to NoConnectionException and showed the Offline screen, as designed.
 
 ## Level 5: permissions
-- Android (emulator, API 35): the system dialog appeared <N> time(s); after that request() returned permanentlyDenied immediately and my own dialog "Camera access is turned off" with "Open settings" appeared. "Open settings" opens the app's permission page; after allowing the camera there, Take photo opens the camera.
 - iOS (not tested, no Mac): the system dialog appears only once. After one "Don't Allow" permission_handler reports permanentlyDenied and the only way back is openAppSettings(). The fourth Photos state is called limited (the user shared only selected photos).
 - launchUrl(Uri.parse('kbtu.edu.kz')) without a scheme returned false and nothing opened; with https:// the browser opens. I check the bool and show "No app can open this".
 - The camera photo is copied to Documents/avatar.jpg because image_picker keeps camera photos only in a temporary cache; the path is stored in shared_preferences, so the photo survives a restart.

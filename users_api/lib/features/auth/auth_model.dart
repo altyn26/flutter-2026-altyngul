@@ -10,7 +10,7 @@ class AuthModel extends ChangeNotifier {
 
   bool get signedIn => _token != null;
 
-  /// Фейковый логин: любой пароль от 8 символов подходит.
+  /// фейковый логин: любой пароль от 8 символов подходит.
   Future<void> login(String email, String password) async {
     await Future<void>.delayed(const Duration(seconds: 1));
     if (password.length < 8) {
